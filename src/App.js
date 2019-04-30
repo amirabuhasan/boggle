@@ -16,7 +16,7 @@ class App extends Component {
         validWord: false,
         answers: [],
         anyChar: '',
-        editingTile: {},
+        editingTile: null,
         substituteChar: '',
         substituteTile: {}
     };
@@ -91,7 +91,7 @@ class App extends Component {
             this.setState({ editingTile: selectedTile });
             this.setState({ substituteTile: selectedTile });
         } else {
-            this.setState({ editingTile: '' });
+            this.setState({ editingTile: null });
         }
     };
 
@@ -103,7 +103,6 @@ class App extends Component {
 
     render() {
         const { dictionary, boardRows, score, validWord, answers, editingTile, substituteChar, substituteTile } = this.state;
-        console.log(this.state.currentWord)
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
             <div className='App'>
