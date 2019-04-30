@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './resources/scss/main.scss';
+import Board from "./components/Board";
 
 const tilesInRow = 4;
 
@@ -30,19 +30,10 @@ class App extends Component {
         const { dictionary, boardRows } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
-            <div>
-               <div className='board'>
+            <div className='App'>
+               <div className='container'>
                    { !isLoading
-                   &&
-                       (
-                           boardRows.map((row) => (
-                               <div className='row'>
-                                   { row.map(tile => (
-                                       <div>{ tile }</div>
-                                   ))}
-                               </div>
-                           ))
-                       )
+                   && <Board rows={ boardRows }/>
                    }
                </div>
             </div>
