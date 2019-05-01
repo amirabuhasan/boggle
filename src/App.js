@@ -4,6 +4,8 @@ import Board from "./components/Board";
 import Scoreboard from "./components/Scoreboard";
 import AnswersList from "./components/AnswersList";
 import CurrentWord from "./components/CurrentWord";
+import ErrorBanner from "./components/ErrorBanner";
+
 
 const tilesInRow = 4;
 
@@ -18,7 +20,9 @@ class App extends Component {
         anyChar: '',
         editingTile: null,
         substituteChar: '',
-        substituteTile: {}
+        substituteTile: {},
+        showError: false,
+        errorMessage: ''
     };
 
     componentDidMount() {
@@ -171,15 +175,26 @@ class App extends Component {
         if (validWord && !answers.includes(currentWord)) {
             this.setState({ answers: [...this.state.answers, currentWord] });
             this.resetBoard();
+        } else {
+            this.showErrorBanner("Oops! It seems like you've already selected the word!")
         }
     };
 
+    showErrorBanner = (message) => {
+        this.setState({ showError: true, errorMessage: message });
+    };
+
+    closeErrorBanner = () => {
+        this.setState({ showError: false, errorMessage: '' })
+    };
+
     render() {
-        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles } = this.state;
+        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles, showError, errorMessage } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
             <div className='App'>
                <div className='container'>
+                   <ErrorBanner handleClose={ this.closeErrorBanner } showError={ showError } errorMessage={ errorMessage }/>
                    <Scoreboard score={ answers.length * 10 }/>
                    { !isLoading
                    && <Board
