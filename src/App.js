@@ -44,17 +44,18 @@ class App extends Component {
 
     handleSelectTile = (rowIndex, index, character) => {
         const selectedTile = { row: rowIndex, index, character };
+        this.isEditing(false);
         if (this.isAdjacent(selectedTile)) {
             if (character === '*') {
                 this.isEditing(character, selectedTile);
+                this.unSelectTile(selectedTile, character);
             } else {
                 if (this.state.selectedTiles.find(tile => tile.row === rowIndex && tile.index === index)) {
-                    this.unSelectTile(selectedTile)
+                    this.unSelectTile(selectedTile, character);
                 } else {
                     this.selectTile(selectedTile, character);
                     this.isSelected(rowIndex, index);
                 }
-                this.setState({ editingTile: null })
             }
         }
     };
@@ -65,15 +66,17 @@ class App extends Component {
         }, () => { this.isValidWord() });
     };
 
-    unSelectTile = (selectedTile) => {
+    unSelectTile = (selectedTile, character) => {
         let isAdjacent = false;
 
-        const removedFromSelectedTiles = this.state.selectedTiles.filter(tile => (JSON.stringify(tile) !== JSON.stringify(selectedTile)));
+        const removedFromSelectedTiles = this.state.selectedTiles.filter(tile => (JSON.stringify({ row: tile.row, index: tile.index }) !== JSON.stringify({ row: selectedTile.row, index: selectedTile.index })));
         if (removedFromSelectedTiles.length > 0) {
             for (let i = 0; i < removedFromSelectedTiles.length; i++) {
-                const filteredSelectedTiles = removedFromSelectedTiles.filter(tile => JSON.stringify(tile) !== JSON.stringify(removedFromSelectedTiles[i]));
+                const filteredSelectedTiles = removedFromSelectedTiles.filter(tile => JSON.stringify({ row: tile.row, index: tile.index }) !== JSON.stringify({ row: removedFromSelectedTiles[i].row, index: removedFromSelectedTiles[i].index }));
                 if (this.isAdjacent(removedFromSelectedTiles[i], filteredSelectedTiles)) {
                     isAdjacent = true;
+                } else {
+                    isAdjacent = false;
                     break
                 }
             }
@@ -83,14 +86,34 @@ class App extends Component {
 
         if (isAdjacent) {
             this.setState({
-                selectedTiles: removedFromSelectedTiles
-            }, () => this.isValidWord())
+                selectedTiles: removedFromSelectedTiles,
+            }, () => this.isValidWord());
+            if (character === '*') {
+                this.setState({
+                    substituteChar: ''
+                })
+            }
         }
     };
 
+    checkSelected = (selectedTile) => {
+        const { selectedTiles } = this.state;
+        return selectedTiles.find(tile => JSON.stringify({ row: tile.row, index: tile.index }) === JSON.stringify({ row: selectedTile.row, index: selectedTile.index }))
+    };
+
     isEditing = (character, selectedTile) => {
-        this.setState({ editingTile: selectedTile });
-        this.setState({ substituteTile: selectedTile });
+        if (!character) {
+            this.setState({ editingTile: null });
+        } else {
+            if (!this.checkSelected(selectedTile)) {
+                if (this.state.editingTile) {
+                    this.setState({ editingTile: null });
+                } else {
+                    this.setState({ editingTile: selectedTile });
+                    this.setState({ substituteTile: selectedTile });
+                }
+            }
+        }
     };
 
     handleChange = (e) => {
@@ -142,9 +165,10 @@ class App extends Component {
     };
 
     submitAnswer = () => {
-        const { validWord } = this.state;
+        const { validWord, answers } = this.state;
         const currentWord = this.getCurrentWord();
-        if (validWord) {
+
+        if (validWord && !answers.includes(currentWord)) {
             this.setState({ answers: [...this.state.answers, currentWord] });
             this.resetBoard();
         }
@@ -157,7 +181,6 @@ class App extends Component {
             <div className='App'>
                <div className='container'>
                    <Scoreboard score={ answers.length * 10 }/>
-                   <AnswersList answers={ answers }/>
                    { !isLoading
                    && <Board
                        rows={ boardRows }
@@ -175,7 +198,8 @@ class App extends Component {
                    />
                    }
                    <CurrentWord currentWord={ this.getCurrentWord() }/>
-                   <button onClick={ this.submitAnswer }>Submit Answer</button>
+                   <button onClick={ this.submitAnswer } style={{ marginBottom: '20px' }}>Submit Answer</button>
+                   <AnswersList answers={ answers }/>
                </div>
             </div>
         );

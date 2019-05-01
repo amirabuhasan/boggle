@@ -8,7 +8,7 @@ export default class AnswersList extends Component {
         return (
             <ul className={ base }>
                 { answers.map((answer, i) => (
-                    <li key={ i }>{ answer }</li>
+                    <li className={ `${base}__answer`} key={ i }>{ answer }</li>
                 ))}
             </ul>
         )
