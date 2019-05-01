@@ -132,7 +132,7 @@ class App extends Component {
     };
 
     render() {
-        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile } = this.state;
+        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
             <div className='App'>
@@ -152,6 +152,7 @@ class App extends Component {
                        substituteChar={ substituteChar }
                        handleChange={ this.handleChange }
                        substituteTile={ substituteTile }
+                       disabled={ selectedTiles.length === tilesInRow }
                    />
                    }
                    <button onClick={ this.submitAnswer }>Submit Answer</button>
