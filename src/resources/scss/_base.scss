@@ -18,6 +18,9 @@ audio, video {
   margin-top: 50px;
 }
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: auto;
   padding-left: 15px;
   padding-right: 15px;

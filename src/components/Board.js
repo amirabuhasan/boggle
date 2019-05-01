@@ -4,7 +4,7 @@ const base = 'board';
 
 export default class Board extends Component {
     renderTile = (rowIndex, i, character) => {
-        const { substituteChar, submitChar, handleChange, editingTile, substituteTile } = this.props;
+        const { substituteChar, handleChange, editingTile, substituteTile } = this.props;
 
         if (i === substituteTile.index && rowIndex === substituteTile.row && substituteChar !== '') {
             return (
@@ -15,7 +15,6 @@ export default class Board extends Component {
                 <div className={`${base}__edit-char-container`}>
                     <label>Character:</label>
                     <input className={`${base}__edit-char`} type='text' name='substituteChar' onChange={ handleChange } autoFocus />
-                    <button onClick={ submitChar } value={ substituteChar }>Submit</button>
                 </div>
             )
         } else {
