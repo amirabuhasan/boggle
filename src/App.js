@@ -12,7 +12,6 @@ class App extends Component {
         boardRows: [],
         score: 0,
         selectedTiles: [],
-        currentWord: '',
         validWord: false,
         answers: [],
         anyChar: '',
@@ -39,49 +38,76 @@ class App extends Component {
     }
 
     resetBoard = () => {
-        this.setState({ currentWord: '', selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false })
+        this.setState({ selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false })
     };
 
     handleSelectTile = (rowIndex, index, character) => {
-        const selectedTile = { row: rowIndex, index };
+        const selectedTile = { row: rowIndex, index, character };
         if (this.isAdjacent(selectedTile)) {
             if (character === '*') {
                 this.isEditing(character, selectedTile);
             } else {
-                this.selectTile(selectedTile, character);
-                this.isSelected(rowIndex, index);
+                if (this.state.selectedTiles.find(tile => tile.row === rowIndex && tile.index === index)) {
+                    this.unSelectTile(selectedTile)
+                } else {
+                    this.selectTile(selectedTile, character);
+                    this.isSelected(rowIndex, index);
+                }
+                this.setState({ editingTile: null })
             }
         }
     };
 
-    selectTile = (selectedTile, character) => {
+    selectTile = (selectedTile) => {
         this.setState({
-            selectedTiles: [...this.state.selectedTiles, selectedTile],
-            currentWord: this.state.currentWord + character,
-            editingTile: null
+            selectedTiles: [...this.state.selectedTiles, selectedTile]
         }, () => { this.isValidWord() });
     };
 
+    unSelectTile = (selectedTile) => {
+        this.setState({
+            selectedTiles: this.state.selectedTiles.filter(tile => (tile.row !== selectedTile.row || tile.index !== selectedTile.index))
+        }, () => { this.isValidWord() });
+    };
+
+    isEditing = (character, selectedTile) => {
+        this.setState({ editingTile: selectedTile });
+        this.setState({ substituteTile: selectedTile });
+    };
+
     handleChange = (e) => {
-        const { substituteTile } = this.state;
         const field = e.target.name;
         const value = e.target.value.toUpperCase();
-        // this.setState({ [field]: value, currentWord: this.state.currentWord.slice(0, this.state.currentWord.length - 1) + value })
         this.setState({
             [field]: value,
-        }, () => { this.selectTile(substituteTile, value) });
-        this.isSelected(substituteTile.rowIndex, substituteTile.index);
+            substituteTile: {
+                ...this.state.substituteTile,
+                character: value
+            }
+        }, () => {
+            this.selectTile(this.state.substituteTile, value)
+        });
+        this.isSelected(this.state.substituteTile.rowIndex, this.state.substituteTile.index);
     };
 
     isValidWord = () => {
-        const { currentWord, dictionary } = this.state;
+        const { dictionary } = this.state;
+        const currentWord = this.getCurrentWord();
+        console.log(currentWord)
         if (currentWord.length >= 3) {
             if (dictionary.includes(currentWord.toLowerCase())) {
                 this.setState({ validWord: true })
             } else {
                 this.setState({ validWord: false })
             }
+        } else {
+            this.setState({ validWord: false })
         }
+    };
+
+    getCurrentWord = () => {
+        const { selectedTiles } = this.state;
+        return selectedTiles.map((tile) => tile.character).join("");
     };
 
     isAdjacent = (currentSelectedTile) => {
@@ -98,16 +124,12 @@ class App extends Component {
     };
 
     submitAnswer = () => {
-        const { currentWord, validWord } = this.state;
+        const { validWord } = this.state;
+        const currentWord = this.getCurrentWord();
         if (validWord) {
             this.setState({ answers: [...this.state.answers, currentWord]});
             this.resetBoard();
         }
-    };
-
-    isEditing = (character, selectedTile) => {
-        this.setState({ editingTile: selectedTile });
-        this.setState({ substituteTile: selectedTile });
     };
 
     render() {
