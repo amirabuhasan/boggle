@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -44,9 +44,7 @@ export default class Modal extends Component {
                             <DialogContentText id="alert-dialog-slide-description">
                                 { modalText[type].subheader &&
                                     modalText[type].subheader.map((text, i) => (
-                                        <Fragment>
-                                            <span style={{ marginBottom: i === modalText[type].subheader.length - 1 ? '' : '10px', display: 'block' }}>{text}</span>
-                                        </Fragment>
+                                        <span key={ i } style={{ marginBottom: i === modalText[type].subheader.length - 1 ? '' : '10px', display: 'block' }}>{text}</span>
                                     ))
                                 }
                             </DialogContentText>
