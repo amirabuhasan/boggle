@@ -7,7 +7,7 @@ export default class Scoreboard extends Component {
         const { score } = this.props;
         return (
             <div className={ base }>
-                <p>Your score: { score }</p>
+                <p className={ `${base}__text` }>Your score: { score }</p>
             </div>
         )
     }

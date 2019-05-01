@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import Snackbar from "@material-ui/core/Snackbar";
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+import ErrorIcon from '@material-ui/icons/Error';
+
+const base = 'error-banner';
+
 class ErrorBanner extends Component {
     render() {
         const { showError, errorMessage, handleClose } = this.props;
@@ -18,11 +22,15 @@ class ErrorBanner extends Component {
                 }}
             >
             <SnackbarContent
-                classes={{ root: 'error-banner' }}
+                classes={{ root: base }}
                 ContentProps={{
                     'aria-describedby': 'message-id',
                 }}
-                message={<span id="message-id">{ errorMessage }</span>}
+                message={
+                    <span id="message-id" className={`${base}__message`}>{ errorMessage }
+                        <ErrorIcon className={`${base}__icon`} />
+                    </span>}
+                variant="error"
             />
             </Snackbar>
         )

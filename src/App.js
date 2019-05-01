@@ -5,7 +5,8 @@ import Scoreboard from "./components/Scoreboard";
 import AnswersList from "./components/AnswersList";
 import CurrentWord from "./components/CurrentWord";
 import ErrorBanner from "./components/ErrorBanner";
-
+import Modal from "./components/Modal";
+import Button from '@material-ui/core/Button';
 
 const tilesInRow = 4;
 
@@ -22,10 +23,15 @@ class App extends Component {
         substituteChar: '',
         substituteTile: {},
         showError: false,
-        errorMessage: ''
+        errorMessage: '',
+        modalText: '',
+        modalType: '',
     };
 
     componentDidMount() {
+        setTimeout(() => {
+            this.openModal('start');
+        }, 100);
         fetch('data/dictionary.txt')
             .then(response => response.text())
             .then(text => this.setState({ dictionary: text.toLowerCase().split("\n") }));
@@ -41,6 +47,14 @@ class App extends Component {
                 this.setState({ boardRows })
             })
     }
+
+    openModal = (type) => {
+        this.setState({ modalType: type })
+    };
+
+    closeModal = () => {
+        this.setState({ modalType: '' })
+    };
 
     resetBoard = () => {
         this.setState({ selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false, editingTile: null })
@@ -61,6 +75,8 @@ class App extends Component {
                     this.isSelected(rowIndex, index);
                 }
             }
+        } else {
+            this.showErrorBanner("Tiles must be adjacent!")
         }
     };
 
@@ -97,6 +113,8 @@ class App extends Component {
                     substituteChar: ''
                 })
             }
+        } else {
+            this.showErrorBanner("Your tiles won't be adjacent if you remove this tile!")
         }
     };
 
@@ -172,11 +190,13 @@ class App extends Component {
         const { validWord, answers } = this.state;
         const currentWord = this.getCurrentWord();
 
-        if (validWord && !answers.includes(currentWord)) {
+        if (answers.includes(currentWord)) {
+            this.showErrorBanner("Oops! It seems like you've already selected the word!")
+        } else if (validWord) {
             this.setState({ answers: [...this.state.answers, currentWord] });
             this.resetBoard();
         } else {
-            this.showErrorBanner("Oops! It seems like you've already selected the word!")
+            this.showErrorBanner("Oops! It seems your word has less than 3 characters!")
         }
     };
 
@@ -189,12 +209,13 @@ class App extends Component {
     };
 
     render() {
-        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles, showError, errorMessage } = this.state;
+        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles, showError, errorMessage, modalType } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
             <div className='App'>
                <div className='container'>
                    <ErrorBanner handleClose={ this.closeErrorBanner } showError={ showError } errorMessage={ errorMessage }/>
+                   <Modal type={ modalType } handleClose={ this.closeModal }/>
                    <Scoreboard score={ answers.length * 10 }/>
                    { !isLoading
                    && <Board
@@ -213,7 +234,9 @@ class App extends Component {
                    />
                    }
                    <CurrentWord currentWord={ this.getCurrentWord() }/>
-                   <button onClick={ this.submitAnswer } style={{ marginBottom: '20px' }}>Submit Answer</button>
+                   <Button variant="contained" color="secondary" onClick={ this.submitAnswer } style={{ marginBottom: '20px' }}>
+                       Submit Answer
+                   </Button>
                    <AnswersList answers={ answers }/>
                </div>
             </div>

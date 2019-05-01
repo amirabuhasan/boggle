@@ -1,0 +1,10 @@
+.error-banner {
+  background-color: #F44336 !important;
+  &__message {
+    display: flex;
+    align-items: center;
+  }
+  &__icon {
+    margin-left: 5px;
+  }
+}
