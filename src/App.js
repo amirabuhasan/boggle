@@ -42,20 +42,35 @@ class App extends Component {
         this.setState({ currentWord: '', selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false })
     };
 
-    selectTile = (rowIndex, index, character) => {
+    handleSelectTile = (rowIndex, index, character) => {
         const selectedTile = { row: rowIndex, index };
         if (this.isAdjacent(selectedTile)) {
             if (character === '*') {
                 this.isEditing(character, selectedTile);
             } else {
-                this.setState({
-                    selectedTiles: [...this.state.selectedTiles, selectedTile],
-                    currentWord: this.state.currentWord + character,
-                    editingTile: null
-                }, () => { this.isValidWord() });
+                this.selectTile(selectedTile, character);
                 this.isSelected(rowIndex, index);
             }
         }
+    };
+
+    selectTile = (selectedTile, character) => {
+        this.setState({
+            selectedTiles: [...this.state.selectedTiles, selectedTile],
+            currentWord: this.state.currentWord + character,
+            editingTile: null
+        }, () => { this.isValidWord() });
+    };
+
+    handleChange = (e) => {
+        const { substituteTile } = this.state;
+        const field = e.target.name;
+        const value = e.target.value.toUpperCase();
+        // this.setState({ [field]: value, currentWord: this.state.currentWord.slice(0, this.state.currentWord.length - 1) + value })
+        this.setState({
+            [field]: value,
+        }, () => { this.selectTile(substituteTile, value) });
+        this.isSelected(substituteTile.rowIndex, substituteTile.index);
     };
 
     isValidWord = () => {
@@ -95,20 +110,6 @@ class App extends Component {
         this.setState({ substituteTile: selectedTile });
     };
 
-    handleChange = (e) => {
-        const { substituteTile } = this.state;
-        const field = e.target.name;
-        const value = e.target.value.toUpperCase();
-        // this.setState({ [field]: value, currentWord: this.state.currentWord.slice(0, this.state.currentWord.length - 1) + value })
-        this.setState({
-            [field]: value,
-            selectedTiles: [...this.state.selectedTiles, substituteTile],
-            currentWord: this.state.currentWord + value,
-            editingTile: null
-        }, () => { this.isValidWord() });
-        this.isSelected(substituteTile.rowIndex, substituteTile.index);
-    };
-
     render() {
         const { dictionary, boardRows, score, validWord, answers, editingTile, substituteChar, substituteTile } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
@@ -122,7 +123,7 @@ class App extends Component {
                        rows={ boardRows }
                        maxWordLength={ tilesInRow }
                        dictionary={ dictionary }
-                       selectTile={ this.selectTile }
+                       handleSelectTile={ this.handleSelectTile }
                        validWord={ validWord }
                        isSelected={ this.isSelected }
                        submitChar={ this.submitChar }
