@@ -44,13 +44,17 @@ class App extends Component {
 
     selectTile = (rowIndex, index, character) => {
         const selectedTile = { row: rowIndex, index };
-        this.isEditing(character, selectedTile);
         if (this.isAdjacent(selectedTile)) {
-            this.setState({
-                selectedTiles: [...this.state.selectedTiles, selectedTile],
-                currentWord: this.state.currentWord + character
-            }, () => { this.isValidWord() });
-            this.isSelected(rowIndex, index);
+            if (character === '*') {
+                this.isEditing(character, selectedTile);
+            } else {
+                this.setState({
+                    selectedTiles: [...this.state.selectedTiles, selectedTile],
+                    currentWord: this.state.currentWord + character,
+                    editingTile: null
+                }, () => { this.isValidWord() });
+                this.isSelected(rowIndex, index);
+            }
         }
     };
 
@@ -87,18 +91,22 @@ class App extends Component {
     };
 
     isEditing = (character, selectedTile) => {
-        if (character === '*') {
-            this.setState({ editingTile: selectedTile });
-            this.setState({ substituteTile: selectedTile });
-        } else {
-            this.setState({ editingTile: null });
-        }
+        this.setState({ editingTile: selectedTile });
+        this.setState({ substituteTile: selectedTile });
     };
 
     handleChange = (e) => {
+        const { substituteTile } = this.state;
         const field = e.target.name;
         const value = e.target.value.toUpperCase();
-        this.setState({ [field]: value, currentWord: this.state.currentWord.slice(0, this.state.currentWord.length - 1) + value })
+        // this.setState({ [field]: value, currentWord: this.state.currentWord.slice(0, this.state.currentWord.length - 1) + value })
+        this.setState({
+            [field]: value,
+            selectedTiles: [...this.state.selectedTiles, substituteTile],
+            currentWord: this.state.currentWord + value,
+            editingTile: null
+        }, () => { this.isValidWord() });
+        this.isSelected(substituteTile.rowIndex, substituteTile.index);
     };
 
     render() {
