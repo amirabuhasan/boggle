@@ -38,7 +38,7 @@ class App extends Component {
     }
 
     resetBoard = () => {
-        this.setState({ selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false })
+        this.setState({ selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false, editingTile: null })
     };
 
     handleSelectTile = (rowIndex, index, character) => {
@@ -93,7 +93,6 @@ class App extends Component {
     isValidWord = () => {
         const { dictionary } = this.state;
         const currentWord = this.getCurrentWord();
-        console.log(currentWord)
         if (currentWord.length >= 3) {
             if (dictionary.includes(currentWord.toLowerCase())) {
                 this.setState({ validWord: true })
@@ -127,18 +126,18 @@ class App extends Component {
         const { validWord } = this.state;
         const currentWord = this.getCurrentWord();
         if (validWord) {
-            this.setState({ answers: [...this.state.answers, currentWord]});
+            this.setState({ answers: [...this.state.answers, currentWord] });
             this.resetBoard();
         }
     };
 
     render() {
-        const { dictionary, boardRows, score, validWord, answers, editingTile, substituteChar, substituteTile } = this.state;
+        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
             <div className='App'>
                <div className='container'>
-                   <ScoreBoard score={ score }/>
+                   <ScoreBoard score={ answers.length * 10 }/>
                    <AnswersList answers={ answers }/>
                    { !isLoading
                    && <Board
