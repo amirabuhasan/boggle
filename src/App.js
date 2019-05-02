@@ -9,7 +9,8 @@ import Modal from "./components/Modal";
 import Button from '@material-ui/core/Button';
 
 const tilesInRow = 4;
-const timeAllocatedInSeconds = 30;
+const timeAllocatedInMinutes = 5;
+const timeAllocatedInSeconds = timeAllocatedInMinutes * 60;
 
 class App extends Component {
     state = {
@@ -275,7 +276,7 @@ class App extends Component {
         const score = answers.length * 10;
 
         setTimeout(() => {
-            if (!localStorage.getItem('high_score') || score > localStorage.getItem('high_score')) {
+            if ((score > 0 && !localStorage.getItem('high_score')) || score > localStorage.getItem('high_score')) {
                 localStorage.setItem('high_score', score);
             }
         }, 500);
@@ -290,7 +291,7 @@ class App extends Component {
             <div className='App'>
                <div className='container'>
                    <ErrorBanner handleClose={ this.closeErrorBanner } showError={ showError } errorMessage={ errorMessage }/>
-                   <Modal type={ modalType } handleClose={ this.closeModal } score={ answers.length * 10 }/>
+                   <Modal type={ modalType } handleClose={ this.closeModal } score={ answers.length * 10 } seconds={ timeAllocatedInSeconds }/>
                    <TopBar score={ answers.length * 10 } startCountdown={ startCountdown } handleEndCountdown={ this.handleEndCountdown } seconds={ timeAllocatedInSeconds } handleReplay={ this.handleReplay }/>
                    { !isLoading
                        ?

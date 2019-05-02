@@ -6,6 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import moment from "moment";
 
 const base = 'modal';
 
@@ -14,8 +15,14 @@ function Transition(props) {
 }
 
 export default class Modal extends Component {
+    convertSecondsToReadableTime = (seconds) => {
+        const miliseconds = seconds * 1000;
+        return moment.utc(miliseconds)
+            .format('m');
+    };
+
     render() {
-        const { type, handleClose, score } = this.props;
+        const { type, handleClose, score, seconds } = this.props;
         const isOpen = type ? true : false;
         const highScore = localStorage.getItem('high_score');
         const modalText = {
@@ -24,7 +31,7 @@ export default class Modal extends Component {
                 subheader:
                     <Fragment>
                         <span>
-                            You will be playing a game called Boggle.The goal is to find as many 3 - 4 character words as possible in 5 minutes. When a tile contains the "*" character, it can be substituted with any character of your choice.
+                            You will be playing a game called Boggle.The goal is to find as many 3 - 4 character words as possible in { this.convertSecondsToReadableTime(seconds) > 1 ? this.convertSecondsToReadableTime(seconds) + ' minutes' : this.convertSecondsToReadableTime(seconds) + ' minute' }. Special characters are denoted by "*", and can be substituted with any character of your choice.
                         </span>
                         <br /><br />
                         <span>Good luck!</span>
