@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import './resources/scss/main.scss';
 import Board from "./components/Board";
 import TopBar from "./components/TopBar";
@@ -9,12 +9,12 @@ import Modal from "./components/Modal";
 import Button from '@material-ui/core/Button';
 
 const tilesInRow = 4;
+const timeAllocatedInSeconds = 30;
 
 class App extends Component {
     state = {
         dictionary: [],
         boardRows: [],
-        score: 0,
         selectedTiles: [],
         validWord: false,
         answers: [],
@@ -26,11 +26,13 @@ class App extends Component {
         errorMessage: '',
         modalText: '',
         modalType: '',
+        startCountdown: false
     };
 
     componentDidMount() {
         setTimeout(() => {
             if (localStorage.getItem('is_replay')) {
+                this.handleStartCountdown();
                 localStorage.removeItem('is_replay');
             } else {
                 this.openModal('start');
@@ -50,8 +52,24 @@ class App extends Component {
                     boardRows.push(shuffledTiles.splice(0, tilesInRow));
                 }
                 this.setState({ boardRows })
-            })
-    }
+            });
+        document.addEventListener("keydown", this.onPressEnter);
+    };
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.onPressEnter);
+    };
+
+    onPressEnter = (e) => {
+        const { modalType } = this.state;
+        if (e.key === 'Enter') {
+            if (modalType) {
+                this.closeModal()
+            } else {
+                this.submitAnswer()
+            }
+        }
+    };
 
     shuffleTiles = (tiles) => {
         for (let i = tiles.length - 1; i > 0; i--) {
@@ -66,11 +84,25 @@ class App extends Component {
     };
 
     closeModal = () => {
+        const { modalType } = this.state;
+        switch(modalType) {
+            case 'start':
+                this.handleStartCountdown();
+                break;
+            case 'end':
+                this.handleReplay();
+                break;
+        }
         this.setState({ modalType: '' })
     };
 
     resetBoard = () => {
         this.setState({ selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false, editingTile: null })
+    };
+
+    handleReplay = () => {
+        localStorage.setItem('is_replay', true);
+        window.location.reload()
     };
 
     handleSelectTile = (rowIndex, index, character) => {
@@ -228,36 +260,65 @@ class App extends Component {
         this.setState({ showError: false, errorMessage: '' })
     };
 
+    handleStartCountdown = () => {
+        this.setState({ startCountdown: true })
+    };
+
+    handleEndCountdown = () => {
+        const { answers } = this.state;
+        const score = answers.length * 10;
+
+        setTimeout(() => {
+            if (!localStorage.getItem('high_score') || score > localStorage.getItem('high_score')) {
+                localStorage.setItem('high_score', score);
+            }
+        }, 500);
+
+        this.openModal('end');
+    };
+
     render() {
-        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles, showError, errorMessage, modalType } = this.state;
+        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles, showError, errorMessage, modalType, startCountdown } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
             <div className='App'>
                <div className='container'>
                    <ErrorBanner handleClose={ this.closeErrorBanner } showError={ showError } errorMessage={ errorMessage }/>
-                   <Modal type={ modalType } handleClose={ this.closeModal }/>
-                   <TopBar score={ answers.length * 10 }/>
+                   <Modal type={ modalType } handleClose={ this.closeModal } score={ answers.length * 10 }/>
+                   <TopBar score={ answers.length * 10 } startCountdown={ startCountdown } handleEndCountdown={ this.handleEndCountdown } seconds={ timeAllocatedInSeconds }/>
                    { !isLoading
-                   && <Board
-                       rows={ boardRows }
-                       maxWordLength={ tilesInRow }
-                       dictionary={ dictionary }
-                       handleSelectTile={ this.handleSelectTile }
-                       validWord={ validWord }
-                       isSelected={ this.isSelected }
-                       submitChar={ this.submitChar }
-                       editingTile={ editingTile }
-                       substituteChar={ substituteChar }
-                       handleChange={ this.handleChange }
-                       substituteTile={ substituteTile }
-                       disabled={ selectedTiles.length === tilesInRow }
-                   />
+                       ?
+                           (
+                               <Fragment>
+                                   <Board
+                                       rows={ boardRows }
+                                       maxWordLength={ tilesInRow }
+                                       dictionary={ dictionary }
+                                       handleSelectTile={ this.handleSelectTile }
+                                       validWord={ validWord }
+                                       isSelected={ this.isSelected }
+                                       submitChar={ this.submitChar }
+                                       editingTile={ editingTile }
+                                       substituteChar={ substituteChar }
+                                       handleChange={ this.handleChange }
+                                       substituteTile={ substituteTile }
+                                       disabled={ selectedTiles.length === tilesInRow }
+                                   />
+                                   <CurrentWord currentWord={ this.getCurrentWord() }/>
+                                   <div style={ { display: 'flex', marginBottom: '20px' } }>
+                                       <Button variant="contained" color="secondary" onClick={ this.submitAnswer }
+                                               style={ { marginRight: '10px' } }>
+                                           Submit Answer
+                                       </Button>
+                                       <Button variant="contained" onClick={ this.resetBoard }>
+                                           Clear
+                                       </Button>
+                                   </div>
+                                   <AnswersList answers={ answers }/>
+                               </Fragment>
+                           )
+                       : <div>Loading...</div>
                    }
-                   <CurrentWord currentWord={ this.getCurrentWord() }/>
-                   <Button variant="contained" color="secondary" onClick={ this.submitAnswer } style={{ marginBottom: '20px' }}>
-                       Submit Answer
-                   </Button>
-                   <AnswersList answers={ answers }/>
                </div>
             </div>
         );
