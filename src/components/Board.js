@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import CurrentWord from "./CurrentWord";
 
 const base = 'board';
 
@@ -23,10 +24,11 @@ export default class Board extends Component {
     };
 
     render() {
-        const { rows, validWord, handleSelectTile, isSelected, disabled } = this.props;
+        const { rows, validWord, handleSelectTile, isSelected, disabled, currentWord } = this.props;
         return (
             <div className={ base }>
                 <div className={ `${base}__container` }>
+                    <CurrentWord currentWord={ currentWord }/>
                     {
                         rows.map((row, rowIndex) => (
                             <div className={ `${base}__row display--flex` } key={ rowIndex }>

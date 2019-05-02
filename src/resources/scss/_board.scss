@@ -6,7 +6,10 @@
   background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
   border-radius: 10px;
   &__container {
+    display: flex;
+    flex-direction: column;
     padding: 40px 20px;
+    padding-top: 20px;
   }
   &__row {
     display: flex;
@@ -36,5 +39,23 @@
   }
   .disabled {
     pointer-events: none;
+  }
+}
+
+@media (max-width: 651px) {
+  .board {
+    &__container {
+      padding: 20px !important;
+      padding-top: 10px !important;
+    }
+    &__tile {
+      width: 18vw;
+      height: 12vh;
+    }
+    &__edit-char-container {
+      label {
+        display: none;
+      }
+    }
   }
 }

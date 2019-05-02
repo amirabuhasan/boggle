@@ -310,8 +310,8 @@ class App extends Component {
                                        handleChange={ this.handleChange }
                                        specialTile={ specialTile }
                                        disabled={ selectedTiles.length === tilesInRow }
+                                       currentWord={ this.getCurrentWord() }
                                    />
-                                   <CurrentWord currentWord={ this.getCurrentWord() }/>
                                    <div style={ { display: 'flex', marginBottom: '20px' } }>
                                        <Button variant="contained" color="secondary" onClick={ this.submitAnswer }
                                                style={ { marginRight: '10px' } }>

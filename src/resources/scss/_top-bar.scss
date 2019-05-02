@@ -11,3 +11,11 @@
     margin-left: 60px;
   }
 }
+
+@media (max-width: 651px) {
+  .top-bar {
+    &__replay-icon {
+      display: none;
+    }
+  }
+}
