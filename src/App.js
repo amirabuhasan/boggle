@@ -30,7 +30,11 @@ class App extends Component {
 
     componentDidMount() {
         setTimeout(() => {
-            this.openModal('start');
+            if (localStorage.getItem('is_replay')) {
+                localStorage.removeItem('is_replay');
+            } else {
+                this.openModal('start');
+            }
         }, 100);
         fetch('data/dictionary.txt')
             .then(response => response.text())
@@ -40,13 +44,22 @@ class App extends Component {
             .then(response => response.text())
             .then(text => {
                 const tileArray = text.split(", ");
+                const shuffledTiles = this.shuffleTiles(tileArray);
                 let boardRows = [];
-                while (tileArray.length > 0) {
-                    boardRows.push(tileArray.splice(0, tilesInRow));
+                while (shuffledTiles.length > 0) {
+                    boardRows.push(shuffledTiles.splice(0, tilesInRow));
                 }
                 this.setState({ boardRows })
             })
     }
+
+    shuffleTiles = (tiles) => {
+        for (let i = tiles.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+        }
+        return tiles
+    };
 
     openModal = (type) => {
         this.setState({ modalType: type })
@@ -177,7 +190,6 @@ class App extends Component {
     isAdjacent = (currentSelectedTile, alternativeArray) => {
         const { selectedTiles } = this.state;
         const arrayToFind = alternativeArray ? alternativeArray : selectedTiles;
-        console.log(alternativeArray)
         if (arrayToFind.length === 0) {
             return true
         } else if (alternativeArray) {
@@ -201,8 +213,10 @@ class App extends Component {
         } else if (validWord) {
             this.setState({ answers: [...this.state.answers, currentWord] });
             this.resetBoard();
-        } else {
+        } else if (currentWord.length < 3){
             this.showErrorBanner("Oops! It seems your word has less than 3 characters!")
+        } else {
+            this.showErrorBanner("It seems that this is not a valid word.")
         }
     };
 

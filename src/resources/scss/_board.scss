@@ -27,9 +27,12 @@
   }
   &__edit-char-container {
     text-align: center;
+    label {
+      font-weight: bold;
+    }
   }
   &__edit-char {
-    width: 80%;
+    width: 40%;
   }
   .disabled {
     pointer-events: none;
