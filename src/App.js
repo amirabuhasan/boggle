@@ -3,7 +3,6 @@ import './resources/scss/main.scss';
 import Board from "./components/Board";
 import TopBar from "./components/TopBar";
 import AnswersList from "./components/AnswersList";
-import CurrentWord from "./components/CurrentWord";
 import ErrorBanner from "./components/ErrorBanner";
 import Modal from "./components/Modal";
 import Button from '@material-ui/core/Button';
