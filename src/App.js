@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './resources/scss/main.scss';
 import Board from "./components/Board";
-import Scoreboard from "./components/Scoreboard";
+import TopBar from "./components/TopBar";
 import AnswersList from "./components/AnswersList";
 import CurrentWord from "./components/CurrentWord";
 import ErrorBanner from "./components/ErrorBanner";
@@ -222,7 +222,7 @@ class App extends Component {
                <div className='container'>
                    <ErrorBanner handleClose={ this.closeErrorBanner } showError={ showError } errorMessage={ errorMessage }/>
                    <Modal type={ modalType } handleClose={ this.closeModal }/>
-                   <Scoreboard score={ answers.length * 10 }/>
+                   <TopBar score={ answers.length * 10 }/>
                    { !isLoading
                    && <Board
                        rows={ boardRows }

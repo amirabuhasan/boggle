@@ -1,0 +1,13 @@
+.top-bar {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  &__score {
+    font-weight: bold;
+    margin-right: 30px;
+  }
+  &__replay-icon {
+    font-size: 16px !important;
+    margin-left: 60px;
+  }
+}

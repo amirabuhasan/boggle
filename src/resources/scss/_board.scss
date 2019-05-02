@@ -3,19 +3,27 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+  background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
+  border-radius: 10px;
   &__container {
-    border: solid 1px;
+    padding: 40px 20px;
   }
   &__row {
     display: flex;
   }
   &__tile {
     display: flex;
+    background-color: #fff176;
+    margin: 10px;
+    border-radius: 10px;
     align-items: center;
     justify-content: center;
     width: 100px;
     height: 100px;
-    border: solid 1px;
+    box-shadow: -4px 2px 8px 1px rgba(0,0,0,0.69);
+    p {
+      font-size: 40px;
+    }
   }
   &__edit-char-container {
     text-align: center;

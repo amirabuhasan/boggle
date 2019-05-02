@@ -14,8 +14,12 @@ audio, video {
   vertical-align: baseline;
 }
 
+body {
+  background: url('/images/geometry.png');
+}
+
 .App {
-  margin-top: 50px;
+  margin-top: 20px;
 }
 .container {
   display: flex;

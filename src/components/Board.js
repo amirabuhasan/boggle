@@ -31,7 +31,7 @@ export default class Board extends Component {
                         rows.map((row, rowIndex) => (
                             <div className={ `${base}__row display--flex` } key={ rowIndex }>
                                 { row.map((character, i) => (
-                                    <div className={ `${base}__tile ${ disabled && !isSelected(rowIndex, i) ? 'disabled' : ''}` } onClick={() => handleSelectTile(rowIndex, i, character)} key={ i } style={{ backgroundColor: isSelected(rowIndex, i) ? validWord ? '#4caf50' : '#f44336' : ''}}>
+                                    <div className={ `${base}__tile ${ disabled && !isSelected(rowIndex, i) ? 'disabled' : ''}` } onClick={() => handleSelectTile(rowIndex, i, character)} key={ i } style={{ backgroundColor: isSelected(rowIndex, i) ? validWord ? '#00e676' : '#f44336' : ''}}>
                                        { this.renderTile(rowIndex, i, character) }
                                     </div>
                                 ))}
