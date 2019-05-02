@@ -177,8 +177,11 @@ class App extends Component {
         const arrayToFind = alternativeArray ? alternativeArray : selectedTiles;
         if (arrayToFind.length === 0) {
             return true
+        } else if (alternativeArray) {
+            return arrayToFind.find(selectedTile => Math.abs(selectedTile.row - currentSelectedTile.row) <= 1 && Math.abs(selectedTile.index - currentSelectedTile.index) <= 1)
+        } else {
+            return Math.abs(arrayToFind[arrayToFind.length - 1].row - currentSelectedTile.row) <= 1 && Math.abs(arrayToFind[arrayToFind.length - 1].index - currentSelectedTile.index) <= 1;
         }
-        return arrayToFind.find(selectedTile => Math.abs(selectedTile.row - currentSelectedTile.row) <= 1 && Math.abs(selectedTile.index - currentSelectedTile.index) <= 1)
     };
 
     isSelected = (rowIndex, i) => {
