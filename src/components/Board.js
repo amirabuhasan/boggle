@@ -4,17 +4,17 @@ const base = 'board';
 
 export default class Board extends Component {
     renderTile = (rowIndex, i, character) => {
-        const { substituteChar, handleChange, editingTile, substituteTile } = this.props;
+        const { specialChar, handleChange, editingTile, specialTile } = this.props;
 
-        if (i === substituteTile.index && rowIndex === substituteTile.row && substituteChar !== '') {
+        if (i === specialTile.index && rowIndex === specialTile.row && specialChar !== '') {
             return (
-                <p>{ substituteChar }</p>
+                <p>{ specialChar }</p>
             )
         } else if (editingTile && i === editingTile.index && rowIndex === editingTile.row) {
             return (
                 <div className={`${base}__edit-char-container`}>
                     <label>Character:</label>
-                    <input className={`${base}__edit-char`} type='text' name='substituteChar' onChange={ handleChange } autoFocus />
+                    <input className={`${base}__edit-char`} type='text' name='specialChar' onChange={ handleChange } autoFocus />
                 </div>
             )
         } else {

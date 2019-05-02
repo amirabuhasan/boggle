@@ -20,8 +20,8 @@ class App extends Component {
         answers: [],
         anyChar: '',
         editingTile: null,
-        substituteChar: '',
-        substituteTile: {},
+        specialChar: '',
+        specialTile: {},
         showError: false,
         errorMessage: '',
         modalText: '',
@@ -97,7 +97,7 @@ class App extends Component {
     };
 
     resetBoard = () => {
-        this.setState({ selectedTiles: [], substituteChar: '', substituteTile: {}, validWord: false, editingTile: null })
+        this.setState({ selectedTiles: [], specialChar: '', specialTile: {}, validWord: false, editingTile: null })
     };
 
     handleReplay = () => {
@@ -106,7 +106,7 @@ class App extends Component {
     };
 
     handleSelectTile = (rowIndex, index, character) => {
-        const { substituteChar } = this.state;
+        const { specialChar } = this.state;
         const selectedTile = { row: rowIndex, index, character };
 
         this.isEditing(false);
@@ -115,8 +115,8 @@ class App extends Component {
         } else {
             if (this.isAdjacent(selectedTile)) {
                 if (character === '*') {
-                    if (substituteChar) {
-                        this.showErrorBanner("You can only use one substitute character per word")
+                    if (specialChar) {
+                        this.showErrorBanner("You can only use one special character per word")
                     } else {
                         this.isEditing(character, selectedTile);
                     }
@@ -163,7 +163,7 @@ class App extends Component {
             }, () => this.isValidWord());
             if (character === '*') {
                 this.setState({
-                    substituteChar: ''
+                    specialChar: ''
                 })
             }
         } else {
@@ -185,7 +185,7 @@ class App extends Component {
                     this.setState({ editingTile: null });
                 } else {
                     this.setState({ editingTile: selectedTile });
-                    this.setState({ substituteTile: selectedTile });
+                    this.setState({ specialTile: selectedTile });
                 }
             }
         }
@@ -196,14 +196,14 @@ class App extends Component {
         const value = e.target.value.toUpperCase();
         this.setState({
             [field]: value,
-            substituteTile: {
-                ...this.state.substituteTile,
+            specialTile: {
+                ...this.state.specialTile,
                 character: value
             }
         }, () => {
-            this.selectTile(this.state.substituteTile, value)
+            this.selectTile(this.state.specialTile, value)
         });
-        this.isSelected(this.state.substituteTile.rowIndex, this.state.substituteTile.index);
+        this.isSelected(this.state.specialTile.rowIndex, this.state.specialTile.index);
     };
 
     isValidWord = () => {
@@ -284,7 +284,7 @@ class App extends Component {
     };
 
     render() {
-        const { dictionary, boardRows, validWord, answers, editingTile, substituteChar, substituteTile, selectedTiles, showError, errorMessage, modalType, startCountdown } = this.state;
+        const { dictionary, boardRows, validWord, answers, editingTile, specialChar, specialTile, selectedTiles, showError, errorMessage, modalType, startCountdown } = this.state;
         const isLoading = dictionary.length === 0 || boardRows === 0;
         return (
             <div className='App'>
@@ -305,9 +305,9 @@ class App extends Component {
                                        isSelected={ this.isSelected }
                                        submitChar={ this.submitChar }
                                        editingTile={ editingTile }
-                                       substituteChar={ substituteChar }
+                                       specialChar={ specialChar }
                                        handleChange={ this.handleChange }
-                                       substituteTile={ substituteTile }
+                                       specialTile={ specialTile }
                                        disabled={ selectedTiles.length === tilesInRow }
                                    />
                                    <CurrentWord currentWord={ this.getCurrentWord() }/>
