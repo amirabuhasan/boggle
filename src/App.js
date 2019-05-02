@@ -63,20 +63,22 @@ class App extends Component {
     handleSelectTile = (rowIndex, index, character) => {
         const selectedTile = { row: rowIndex, index, character };
         this.isEditing(false);
-        if (this.isAdjacent(selectedTile)) {
-            if (character === '*') {
-                this.isEditing(character, selectedTile);
-                this.unSelectTile(selectedTile, character);
-            } else {
-                if (this.state.selectedTiles.find(tile => tile.row === rowIndex && tile.index === index)) {
-                    this.unSelectTile(selectedTile, character);
-                } else {
-                    this.selectTile(selectedTile, character);
-                    this.isSelected(rowIndex, index);
-                }
-            }
+        if (this.checkSelected(selectedTile)) {
+            this.unSelectTile(selectedTile, character);
         } else {
-            this.showErrorBanner("Tiles must be adjacent!")
+            if (this.isAdjacent(selectedTile)) {
+                if (character === '*') {
+                    this.isEditing(character, selectedTile);
+                } else {
+                    if (this.state.selectedTiles.find(tile => tile.row === rowIndex && tile.index === index)) {
+                    } else {
+                        this.selectTile(selectedTile, character);
+                        this.isSelected(rowIndex, index);
+                    }
+                }
+            } else {
+                this.showErrorBanner("Choose a tile that is adjacent to the last tile")
+            }
         }
     };
 
@@ -175,10 +177,11 @@ class App extends Component {
     isAdjacent = (currentSelectedTile, alternativeArray) => {
         const { selectedTiles } = this.state;
         const arrayToFind = alternativeArray ? alternativeArray : selectedTiles;
+        console.log(alternativeArray)
         if (arrayToFind.length === 0) {
             return true
         } else if (alternativeArray) {
-            return arrayToFind.find(selectedTile => Math.abs(selectedTile.row - currentSelectedTile.row) <= 1 && Math.abs(selectedTile.index - currentSelectedTile.index) <= 1)
+            return arrayToFind.find(selectedTile => Math.abs(selectedTile.row - currentSelectedTile.row) <= 1 && Math.abs(selectedTile.index - currentSelectedTile.index) <= 1);
         } else {
             return Math.abs(arrayToFind[arrayToFind.length - 1].row - currentSelectedTile.row) <= 1 && Math.abs(arrayToFind[arrayToFind.length - 1].index - currentSelectedTile.index) <= 1;
         }
