@@ -106,14 +106,20 @@ class App extends Component {
     };
 
     handleSelectTile = (rowIndex, index, character) => {
+        const { substituteChar } = this.state;
         const selectedTile = { row: rowIndex, index, character };
+
         this.isEditing(false);
         if (this.checkSelected(selectedTile)) {
             this.unSelectTile(selectedTile, character);
         } else {
             if (this.isAdjacent(selectedTile)) {
                 if (character === '*') {
-                    this.isEditing(character, selectedTile);
+                    if (substituteChar) {
+                        this.showErrorBanner("You can only use one substitute character per word")
+                    } else {
+                        this.isEditing(character, selectedTile);
+                    }
                 } else {
                     if (this.state.selectedTiles.find(tile => tile.row === rowIndex && tile.index === index)) {
                     } else {
@@ -285,7 +291,7 @@ class App extends Component {
                <div className='container'>
                    <ErrorBanner handleClose={ this.closeErrorBanner } showError={ showError } errorMessage={ errorMessage }/>
                    <Modal type={ modalType } handleClose={ this.closeModal } score={ answers.length * 10 }/>
-                   <TopBar score={ answers.length * 10 } startCountdown={ startCountdown } handleEndCountdown={ this.handleEndCountdown } seconds={ timeAllocatedInSeconds }/>
+                   <TopBar score={ answers.length * 10 } startCountdown={ startCountdown } handleEndCountdown={ this.handleEndCountdown } seconds={ timeAllocatedInSeconds } handleReplay={ this.handleReplay }/>
                    { !isLoading
                        ?
                            (
