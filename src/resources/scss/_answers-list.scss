@@ -1,8 +1,17 @@
 .answers-list {
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 520px;
   list-style: none;
   &__answer {
     margin-right: 5px;
     font-weight: bold;
+  }
+}
+
+@media (max-width: 651px) {
+  .answers-list {
+    width: 100%;
   }
 }

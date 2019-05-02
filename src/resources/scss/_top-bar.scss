@@ -5,6 +5,7 @@
   &__score {
     font-weight: bold;
     margin-right: 30px;
+    white-space: nowrap;
   }
   &__replay-icon {
     font-size: 16px !important;
@@ -14,6 +15,9 @@
 
 @media (max-width: 651px) {
   .top-bar {
+    &__score {
+      margin-right: 15px;
+    }
     &__replay-icon {
       display: none;
     }
